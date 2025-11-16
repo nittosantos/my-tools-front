@@ -178,7 +178,7 @@ Este é um projeto acadêmico desenvolvido para a FATEC.
 
 ## 👥 Desenvolvido por
 
-[Seu nome/equipe]
+### Nitto Dev Software Developer
 
 ---
 
