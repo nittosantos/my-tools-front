@@ -43,10 +43,30 @@ export const handlers = [
 
     const response: LoginResponse = {
       access: mockToken,
+      refresh: "mock-refresh-token-12345",
       user,
     }
 
     return HttpResponse.json(response)
+  }),
+
+  // POST /auth/refresh/
+  http.post(`${API_BASE}/api/auth/refresh/`, async ({ request }) => {
+    await delay(300)
+    const body = (await request.json()) as { refresh: string }
+
+    // Simular validação de refresh token (qualquer token funciona no mock)
+    if (!body.refresh) {
+      return HttpResponse.json(
+        { detail: "Token inválido" },
+        { status: 401 }
+      )
+    }
+
+    // Retornar novo access token
+    return HttpResponse.json({
+      access: `mock-jwt-token-${Date.now()}`,
+    })
   }),
 
   // GET /auth/me/
@@ -332,6 +352,9 @@ export const handlers = [
       updated_at: new Date().toISOString(),
     }
 
+    // Bloquear ferramenta ao criar aluguel
+    tool.available = false
+
     mockRentals.push(newRental)
     return HttpResponse.json(newRental, { status: 201 })
   }),
@@ -352,6 +375,12 @@ export const handlers = [
       updated_at: new Date().toISOString(),
     }
 
+    // Manter ferramenta bloqueada ao aprovar
+    const tool = findToolById(mockRentals[rentalIndex].tool)
+    if (tool) {
+      tool.available = false
+    }
+
     return HttpResponse.json(mockRentals[rentalIndex])
   }),
 
@@ -369,6 +398,47 @@ export const handlers = [
       ...mockRentals[rentalIndex],
       status: "rejected",
       updated_at: new Date().toISOString(),
+    }
+
+    // Liberar ferramenta ao rejeitar
+    const tool = findToolById(mockRentals[rentalIndex].tool)
+    if (tool) {
+      tool.available = true
+    }
+
+    return HttpResponse.json(mockRentals[rentalIndex])
+  }),
+
+  // PATCH /rentals/:id/finish/
+  http.patch(`${API_BASE}/api/rentals/:id/finish/`, async ({ params }) => {
+    await delay(400)
+    const id = parseInt(params.id as string)
+    const rentalIndex = mockRentals.findIndex((r) => r.id === id)
+
+    if (rentalIndex === -1) {
+      return HttpResponse.json({ detail: "Aluguel não encontrado" }, { status: 404 })
+    }
+
+    const rental = mockRentals[rentalIndex]
+
+    // Apenas aluguéis aprovados podem ser finalizados
+    if (rental.status !== "approved") {
+      return HttpResponse.json(
+        { detail: "Apenas aluguéis aprovados podem ser finalizados." },
+        { status: 400 }
+      )
+    }
+
+    mockRentals[rentalIndex] = {
+      ...rental,
+      status: "finished",
+      updated_at: new Date().toISOString(),
+    }
+
+    // Liberar ferramenta ao finalizar
+    const tool = findToolById(rental.tool)
+    if (tool) {
+      tool.available = true
     }
 
     return HttpResponse.json(mockRentals[rentalIndex])

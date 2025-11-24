@@ -15,7 +15,7 @@ test('exemplo: página inicial deve carregar', async ({ page }) => {
 
   // 2. Verificar se algum elemento está na página
   // Aqui você pode procurar por texto, seletor CSS, etc
-  await expect(page.getByText('Aluguel de Ferramentas')).toBeVisible()
+  await expect(page.getByText('My Tools')).toBeVisible()
 })
 
 test('exemplo: deve ter botão de login', async ({ page }) => {

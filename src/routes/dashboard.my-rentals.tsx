@@ -1,12 +1,15 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useMyRentals } from "@/hooks/useMyRentals"
+import { useFinishRental } from "@/hooks/useFinishRental"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { ErrorDisplay } from "@/components/ErrorDisplay"
+import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
+import { CheckCircle2 } from "lucide-react"
 import type { RentalStatus } from "@/types"
 
 const statusLabels: Record<RentalStatus, string> = {
@@ -29,6 +32,7 @@ export const Route = createFileRoute("/dashboard/my-rentals")({
 
 function MyRentalsPage() {
   const { data: rentals, isLoading, error, refetch } = useMyRentals()
+  const { mutate: finishRental, isPending: isFinishing } = useFinishRental()
 
   if (isLoading) {
     return (
@@ -112,6 +116,29 @@ function MyRentalsPage() {
                     </div>
                   )}
                 </div>
+
+                {rental.status === "approved" && (
+                  <div className="flex gap-2 pt-4 border-t">
+                    <Button
+                      variant="default"
+                      onClick={() => finishRental(rental.id)}
+                      disabled={isFinishing}
+                      className="flex-1"
+                    >
+                      {isFinishing ? (
+                        <>
+                          <LoadingSpinner size="sm" className="mr-2" />
+                          Finalizando...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          Finalizar Aluguel
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}

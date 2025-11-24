@@ -1,6 +1,6 @@
-# 🛠️ Marketplace de Aluguel de Ferramentas - Frontend
+# 🛠️ My Tools - Frontend
 
-Frontend desenvolvido em React + TypeScript para o sistema de marketplace de aluguel de ferramentas.
+Frontend desenvolvido em React + TypeScript para o sistema My Tools - marketplace de aluguel de ferramentas.
 
 ## 🚀 Stack Tecnológica
 

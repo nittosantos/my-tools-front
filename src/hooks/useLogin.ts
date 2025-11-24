@@ -15,7 +15,7 @@ export function useLogin() {
       return response.data
     },
     onSuccess: async (data) => {
-      await login(data.access, data.user)
+      await login(data.access, data.refresh, data.user)
       toast.success("Login realizado com sucesso!")
       navigate({ to: "/dashboard/my-tools" })
     },

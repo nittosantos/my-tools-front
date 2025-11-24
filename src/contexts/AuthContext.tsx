@@ -6,7 +6,7 @@ interface AuthContextType {
   user: User | null
   isAuthenticated: boolean
   isLoading: boolean
-  login: (token: string, userData?: User) => Promise<void>
+  login: (token: string, refreshToken?: string, userData?: User) => Promise<void>
   logout: () => void
   refreshUser: () => Promise<void>
 }
@@ -42,14 +42,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } catch (error) {
       // Token inválido ou expirado
       localStorage.removeItem("token")
+      localStorage.removeItem("refresh_token")
       setUser(null)
     } finally {
       setIsLoading(false)
     }
   }
 
-  const login = async (token: string, userData?: User) => {
+  const login = async (token: string, refreshToken?: string, userData?: User) => {
     localStorage.setItem("token", token)
+    if (refreshToken) {
+      localStorage.setItem("refresh_token", refreshToken)
+    }
     if (userData) {
       setUser(userData)
     } else {
@@ -59,6 +63,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     localStorage.removeItem("token")
+    localStorage.removeItem("refresh_token")
     setUser(null)
   }
 

@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router"
 import { useReceivedRentals } from "@/hooks/useReceivedRentals"
 import { useApproveRental } from "@/hooks/useApproveRental"
 import { useRejectRental } from "@/hooks/useRejectRental"
+import { useFinishRental } from "@/hooks/useFinishRental"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -10,7 +11,7 @@ import { ErrorDisplay } from "@/components/ErrorDisplay"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { Check, X } from "lucide-react"
+import { Check, X, CheckCircle2 } from "lucide-react"
 import type { RentalStatus } from "@/types"
 
 const statusLabels: Record<RentalStatus, string> = {
@@ -35,6 +36,7 @@ function ReceivedRentalsPage() {
   const { data: rentals, isLoading, error, refetch } = useReceivedRentals()
   const { mutate: approveRental, isPending: isApproving } = useApproveRental()
   const { mutate: rejectRental, isPending: isRejecting } = useRejectRental()
+  const { mutate: finishRental, isPending: isFinishing } = useFinishRental()
 
   if (isLoading) {
     return (
@@ -152,6 +154,29 @@ function ReceivedRentalsPage() {
                         <>
                           <X className="h-4 w-4 mr-2" />
                           Rejeitar
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+
+                {rental.status === "approved" && (
+                  <div className="flex gap-2 pt-4 border-t">
+                    <Button
+                      variant="default"
+                      onClick={() => finishRental(rental.id)}
+                      disabled={isFinishing}
+                      className="flex-1"
+                    >
+                      {isFinishing ? (
+                        <>
+                          <LoadingSpinner size="sm" className="mr-2" />
+                          Finalizando...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          Finalizar Aluguel
                         </>
                       )}
                     </Button>
