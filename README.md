@@ -20,11 +20,16 @@ Frontend desenvolvido em React + TypeScript para o sistema My Tools - marketplac
 ### ✅ Autenticação
 - Login com validação de formulário
 - Proteção de rotas privadas
-- Logout automático em caso de token inválido (401)
+- Refresh token automático (renovação transparente quando access token expira)
+- Logout automático apenas quando refresh token também expira
 - Context API para gerenciamento de estado do usuário
 
 ### 🏠 Páginas Públicas
-- **Home** (`/`) - Listagem de todas as ferramentas disponíveis
+- **Home** (`/`) - Listagem de todas as ferramentas disponíveis com:
+  - Filtros por categoria (múltiplas), estado e cidade
+  - Busca textual em título e descrição
+  - Ordenação por preço ou data
+  - Paginação (9 itens por página)
 - **Detalhes da Ferramenta** (`/tools/:id`) - Visualização completa com foto, descrição, categoria e preço
 - **Login** (`/login`) - Formulário de autenticação
 
@@ -43,6 +48,10 @@ Frontend desenvolvido em React + TypeScript para o sistema My Tools - marketplac
 - **Aluguéis Recebidos** (`/dashboard/received-rentals`) - Gerenciar solicitações:
   - Aprovar aluguéis
   - Rejeitar aluguéis
+  - Finalizar aluguéis aprovados
+
+- **Meus Aluguéis** (`/dashboard/my-rentals`) - Ações disponíveis:
+  - Finalizar aluguéis aprovados
 
 ## 🛠️ Instalação e Configuração
 
@@ -91,9 +100,16 @@ O projeto utiliza MSW para mockar o backend durante o desenvolvimento. O MSW est
   - `maria_santos` / qualquer senha
   - `pedro_oliveira` / qualquer senha
 
-- **Ferramentas:** 5 ferramentas pré-cadastradas em diferentes categorias e localizações
+- **Ferramentas:** 150 ferramentas pré-cadastradas em diferentes categorias e localizações
 
 - **Aluguéis:** Alguns aluguéis de exemplo para testes
+
+- **Endpoints mockados:**
+  - Autenticação (login, refresh, me)
+  - CRUD completo de ferramentas
+  - CRUD completo de aluguéis (criar, aprovar, rejeitar, finalizar)
+  - Filtros, busca e ordenação
+  - Paginação
 
 ## 📁 Estrutura do Projeto
 
@@ -150,9 +166,13 @@ O projeto utiliza componentes do [shadcn/ui](https://ui.shadcn.com/), incluindo:
 
 A autenticação funciona da seguinte forma:
 1. Usuário faz login via `POST /auth/login/`
-2. Token é salvo no `localStorage`
-3. Token é automaticamente adicionado em todas as requisições via interceptor do Axios
-4. Em caso de resposta 401, o usuário é automaticamente deslogado e redirecionado para `/login`
+2. Access token e refresh token são salvos no `localStorage`
+3. Access token é automaticamente adicionado em todas as requisições via interceptor do Axios
+4. Em caso de resposta 401 (token expirado):
+   - Sistema tenta renovar automaticamente usando refresh token
+   - Se renovação for bem-sucedida, retenta a requisição original
+   - Se renovação falhar, faz logout e redireciona para `/login`
+5. Usuário pode ficar logado por até 7 dias (tempo do refresh token)
 
 ## 📝 Scripts Disponíveis
 
@@ -160,6 +180,12 @@ A autenticação funciona da seguinte forma:
 - `npm run build` - Gera build de produção
 - `npm run preview` - Preview do build de produção
 - `npm run lint` - Executa o ESLint
+- `npm run test` - Executa testes unitários (Vitest)
+- `npm run test:ui` - Interface gráfica para testes
+- `npm run test:coverage` - Testes com relatório de cobertura
+- `npm run test:e2e` - Executa testes E2E (Playwright)
+- `npm run test:e2e:ui` - Interface gráfica para testes E2E
+- `npm run test:e2e:headed` - Testes E2E com navegador visível
 
 ## 🐛 Troubleshooting
 
