@@ -1,4 +1,4 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from "axios"
+import axios, { AxiosError, type AxiosRequestConfig } from "axios"
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "http://127.0.0.1:8000/api",
@@ -43,7 +43,7 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean }
+    const originalRequest = error.config as AxiosRequestConfig & { _retry?: boolean }
 
     // Se for erro na rota de login ou refresh, não tentar refresh
     const requestUrl = originalRequest?.url || ""
@@ -122,4 +122,3 @@ api.interceptors.response.use(
 )
 
 export default api
-
