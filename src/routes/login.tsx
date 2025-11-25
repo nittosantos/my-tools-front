@@ -77,12 +77,13 @@ function LoginPage() {
               </Button>
             </form>
           </Form>
-          <div className="mt-4 text-sm text-muted-foreground">
-            <p>Usuários de teste:</p>
-            <ul className="list-disc list-inside mt-2 space-y-1">
-              <li>joao_silva / qualquer senha</li>
-              <li>maria_santos / qualquer senha</li>
-            </ul>
+          <div className="mt-4 text-center text-sm">
+            <p className="text-muted-foreground">
+              Não tem uma conta?{" "}
+              <a href="/register" className="text-primary hover:underline font-medium">
+                Criar conta
+              </a>
+            </p>
           </div>
         </CardContent>
       </Card>

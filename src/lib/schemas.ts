@@ -5,6 +5,27 @@ export const loginSchema = z.object({
   password: z.string().min(1, "Senha é obrigatória"),
 })
 
+export const registerSchema = z.object({
+  username: z
+    .string()
+    .min(3, "Usuário deve ter pelo menos 3 caracteres")
+    .max(150, "Usuário deve ter no máximo 150 caracteres")
+    .regex(/^[a-zA-Z0-9_]+$/, "Usuário deve conter apenas letras, números e underscore"),
+  email: z.string().email("Email inválido"),
+  password: z
+    .string()
+    .min(8, "Senha deve ter pelo menos 8 caracteres")
+    .regex(/[A-Z]/, "Senha deve conter pelo menos uma letra maiúscula")
+    .regex(/[a-z]/, "Senha deve conter pelo menos uma letra minúscula")
+    .regex(/[0-9]/, "Senha deve conter pelo menos um número"),
+  password_confirm: z.string().min(1, "Confirmação de senha é obrigatória"),
+  first_name: z.string().optional(),
+  last_name: z.string().optional(),
+}).refine((data) => data.password === data.password_confirm, {
+  message: "As senhas não coincidem",
+  path: ["password_confirm"],
+})
+
 export const createToolSchema = z.object({
   title: z.string().min(1, "Título é obrigatório"),
   description: z.string().min(10, "Descrição deve ter pelo menos 10 caracteres"),
@@ -63,6 +84,7 @@ export const createRentalSchema = z.object({
 )
 
 export type LoginFormData = z.infer<typeof loginSchema>
+export type RegisterFormData = z.infer<typeof registerSchema>
 export type CreateToolFormData = z.infer<typeof createToolSchema>
 export type UpdateToolFormData = z.infer<typeof updateToolSchema>
 export type CreateRentalFormData = z.infer<typeof createRentalSchema>

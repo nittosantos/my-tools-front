@@ -1,0 +1,727 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2024-01-01T00:00:00.000Z",
+  "__export_source": "insomnia.desktop.app:v2023.5.8",
+  "resources": [
+    {
+      "_id": "req_auth_register",
+      "parentId": "fld_auth",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/auth/register/",
+      "name": "Registrar Usuário",
+      "description": "Cria uma nova conta de usuário. Após o registro, use o endpoint de login para obter o token JWT.",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"usuario_teste\",\n  \"email\": \"usuario@exemplo.com\",\n  \"password\": \"senha123\",\n  \"first_name\": \"Nome\",\n  \"last_name\": \"Sobrenome\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067201000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_auth_login",
+      "parentId": "fld_auth",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/auth/login/",
+      "name": "Login",
+      "description": "Autenticação JWT - Retorna access_token e refresh_token",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"username\": \"usuario_teste\",\n  \"password\": \"senha123\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067200000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_auth_refresh",
+      "parentId": "fld_auth",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/auth/refresh/",
+      "name": "Refresh Token",
+      "description": "Renovar access_token usando refresh_token",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"refresh\": \"{{ _.refresh_token }}\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067199000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_auth_me",
+      "parentId": "fld_auth",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/auth/me/",
+      "name": "Me (Dados do Usuário)",
+      "description": "Retorna dados do usuário autenticado",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067198000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_tools_list",
+      "parentId": "fld_tools",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/tools/",
+      "name": "Listar Ferramentas",
+      "description": "Lista todas as ferramentas (com filtros e paginação)",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "id": "pair_category",
+          "name": "category",
+          "value": "construcao",
+          "description": "Filtro por categoria (pode repetir para múltiplas)"
+        },
+        {
+          "id": "pair_state",
+          "name": "state",
+          "value": "SP",
+          "description": "Filtro por estado (UF)"
+        },
+        {
+          "id": "pair_city",
+          "name": "city",
+          "value": "São Paulo",
+          "description": "Filtro por cidade (busca parcial)"
+        },
+        {
+          "id": "pair_search",
+          "name": "search",
+          "value": "furadeira",
+          "description": "Busca textual em título e descrição"
+        },
+        {
+          "id": "pair_ordering",
+          "name": "ordering",
+          "value": "created_at",
+          "description": "Ordenação: created_at, -created_at, price_per_day, -price_per_day"
+        },
+        {
+          "id": "pair_page",
+          "name": "page",
+          "value": "1",
+          "description": "Número da página"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067197000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_tools_create",
+      "parentId": "fld_tools",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/tools/",
+      "name": "Criar Ferramenta",
+      "description": "Cria uma nova ferramenta (multipart/form-data para upload de imagem)",
+      "method": "POST",
+      "body": {
+        "mimeType": "multipart/form-data",
+        "params": [
+          {
+            "id": "pair_title",
+            "name": "title",
+            "value": "Furadeira Elétrica",
+            "description": "Título da ferramenta"
+          },
+          {
+            "id": "pair_description",
+            "name": "description",
+            "value": "Furadeira potente para uso doméstico e profissional",
+            "description": "Descrição da ferramenta"
+          },
+          {
+            "id": "pair_category",
+            "name": "category",
+            "value": "construcao",
+            "description": "Categoria: construcao, jardinagem, pintura, etc."
+          },
+          {
+            "id": "pair_price_per_day",
+            "name": "price_per_day",
+            "value": "25.00",
+            "description": "Preço por dia"
+          },
+          {
+            "id": "pair_state",
+            "name": "state",
+            "value": "SP",
+            "description": "Estado (UF)"
+          },
+          {
+            "id": "pair_city",
+            "name": "city",
+            "value": "São Paulo",
+            "description": "Cidade"
+          },
+          {
+            "id": "pair_is_available",
+            "name": "is_available",
+            "value": "true",
+            "description": "Disponível para aluguel"
+          },
+          {
+            "id": "pair_photo",
+            "name": "photo",
+            "value": "",
+            "type": "file",
+            "description": "Foto da ferramenta (opcional)"
+          }
+        ]
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067196000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_tools_detail",
+      "parentId": "fld_tools",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/tools/{{ _.tool_id }}/",
+      "name": "Detalhes da Ferramenta",
+      "description": "Retorna detalhes de uma ferramenta específica",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067195000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_tools_update",
+      "parentId": "fld_tools",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/tools/{{ _.tool_id }}/",
+      "name": "Atualizar Ferramenta",
+      "description": "Atualiza uma ferramenta (apenas o dono pode editar)",
+      "method": "PATCH",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"title\": \"Furadeira Elétrica Atualizada\",\n  \"price_per_day\": \"30.00\",\n  \"is_available\": false\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067194000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_tools_delete",
+      "parentId": "fld_tools",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/tools/{{ _.tool_id }}/",
+      "name": "Deletar Ferramenta",
+      "description": "Deleta uma ferramenta (apenas o dono pode deletar)",
+      "method": "DELETE",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067193000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_tools_my",
+      "parentId": "fld_tools",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/tools/my/",
+      "name": "Minhas Ferramentas",
+      "description": "Lista ferramentas do usuário autenticado",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "id": "pair_page",
+          "name": "page",
+          "value": "1",
+          "description": "Número da página"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067192000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_rentals_list",
+      "parentId": "fld_rentals",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/rentals/",
+      "name": "Listar Aluguéis",
+      "description": "Lista aluguéis do usuário (como locatário ou proprietário)",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "id": "pair_page",
+          "name": "page",
+          "value": "1",
+          "description": "Número da página"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067191000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_rentals_create",
+      "parentId": "fld_rentals",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/rentals/",
+      "name": "Criar Aluguel",
+      "description": "Cria uma solicitação de aluguel",
+      "method": "POST",
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"tool\": {{ _.tool_id }},\n  \"start_date\": \"2025-01-15\",\n  \"end_date\": \"2025-01-20\"\n}"
+      },
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        },
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067190000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_rentals_detail",
+      "parentId": "fld_rentals",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/rentals/{{ _.rental_id }}/",
+      "name": "Detalhes do Aluguel",
+      "description": "Retorna detalhes de um aluguel específico",
+      "method": "GET",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067189000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_rentals_my",
+      "parentId": "fld_rentals",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/rentals/my/",
+      "name": "Meus Aluguéis",
+      "description": "Lista aluguéis onde o usuário é o locatário",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "id": "pair_page",
+          "name": "page",
+          "value": "1",
+          "description": "Número da página"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067188000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_rentals_received",
+      "parentId": "fld_rentals",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/rentals/received/",
+      "name": "Aluguéis Recebidos",
+      "description": "Lista aluguéis recebidos (onde o usuário é o proprietário da ferramenta)",
+      "method": "GET",
+      "body": {},
+      "parameters": [
+        {
+          "id": "pair_page",
+          "name": "page",
+          "value": "1",
+          "description": "Número da página"
+        }
+      ],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067187000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_rentals_approve",
+      "parentId": "fld_rentals",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/rentals/{{ _.rental_id }}/approve/",
+      "name": "Aprovar Aluguel",
+      "description": "Aprova uma solicitação de aluguel (apenas o proprietário pode aprovar)",
+      "method": "PATCH",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067186000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_rentals_reject",
+      "parentId": "fld_rentals",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/rentals/{{ _.rental_id }}/reject/",
+      "name": "Rejeitar Aluguel",
+      "description": "Rejeita uma solicitação de aluguel (apenas o proprietário pode rejeitar)",
+      "method": "PATCH",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067185000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "req_rentals_finish",
+      "parentId": "fld_rentals",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "url": "{{ _.base_url }}/api/rentals/{{ _.rental_id }}/finish/",
+      "name": "Finalizar Aluguel",
+      "description": "Finaliza um aluguel aprovado (owner ou renter podem finalizar). Libera a ferramenta automaticamente.",
+      "method": "PATCH",
+      "body": {},
+      "parameters": [],
+      "headers": [
+        {
+          "name": "Authorization",
+          "value": "Bearer {{ _.access_token }}"
+        }
+      ],
+      "authentication": {},
+      "metaSortKey": -1704067184000,
+      "isPrivate": false,
+      "settingStoreCookies": true,
+      "settingSendCookies": true,
+      "settingDisableRenderRequestBody": false,
+      "settingEncodeUrl": true,
+      "settingRebuildPath": true,
+      "settingFollowRedirects": "global",
+      "_type": "request"
+    },
+    {
+      "_id": "fld_auth",
+      "parentId": "wrk_main",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "name": "🔐 Autenticação",
+      "description": "Endpoints de autenticação JWT",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1704067200000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_tools",
+      "parentId": "wrk_main",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "name": "🛠️ Ferramentas",
+      "description": "Endpoints de CRUD de ferramentas",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1704067199000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "fld_rentals",
+      "parentId": "wrk_main",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "name": "📦 Aluguéis",
+      "description": "Endpoints de gerenciamento de aluguéis",
+      "environment": {},
+      "environmentPropertyOrder": null,
+      "metaSortKey": -1704067198000,
+      "_type": "request_group"
+    },
+    {
+      "_id": "wrk_main",
+      "parentId": null,
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "name": "Aluguel de Ferramentas API",
+      "description": "Collection completa da API de Aluguel de Ferramentas",
+      "scope": "collection",
+      "_type": "workspace"
+    },
+    {
+      "_id": "env_base",
+      "parentId": "wrk_main",
+      "modified": 1704067200000,
+      "created": 1704067200000,
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://127.0.0.1:8000",
+        "access_token": "",
+        "refresh_token": "",
+        "tool_id": "1",
+        "rental_id": "1"
+      },
+      "dataPropertyOrder": {
+        "&": [
+          "base_url",
+          "access_token",
+          "refresh_token",
+          "tool_id",
+          "rental_id"
+        ]
+      },
+      "color": null,
+      "isPrivate": false,
+      "metaSortKey": 1704067200000,
+      "_type": "environment"
+    }
+  ]
+}
+
