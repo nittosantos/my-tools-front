@@ -5,10 +5,15 @@ import './index.css'
 import App from './App.tsx'
 import { queryClient } from './lib/query-client'
 
-// Inicializar MSW apenas em desenvolvimento
+// Inicializar MSW em desenvolvimento ou se habilitado via variável de ambiente
 async function enableMocking() {
-  // Sempre usar MSW em desenvolvimento (não precisa do backend rodando)
-  if (import.meta.env.MODE !== 'development') {
+  // Usar MSW em desenvolvimento OU se a variável VITE_USE_MSW estiver definida
+  // Isso permite usar MSW em produção para demos (ex: Vercel)
+  const shouldUseMSW = 
+    import.meta.env.MODE === 'development' || 
+    import.meta.env.VITE_USE_MSW === 'true'
+  
+  if (!shouldUseMSW) {
     return
   }
 

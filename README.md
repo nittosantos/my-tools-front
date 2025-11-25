@@ -91,7 +91,22 @@ O projeto utiliza MSW para mockar o backend durante o desenvolvimento. O MSW est
 - Retornar dados mockados realistas
 - Simular comportamentos do backend (sucesso, erro, etc.)
 
-**Nota:** O MSW só funciona em modo de desenvolvimento. Em produção, as requisições serão feitas para o backend real.
+**Nota:** Por padrão, o MSW só funciona em modo de desenvolvimento. Em produção, as requisições serão feitas para o backend real.
+
+### Usar MSW em Produção (para demos)
+
+Se você quiser usar MSW em produção (útil para demos sem backend, como na Vercel):
+
+1. **Na Vercel**, adicione uma variável de ambiente:
+   - Nome: `VITE_USE_MSW`
+   - Valor: `true`
+
+2. **Ou crie um arquivo `.env.production`** na raiz do projeto:
+   ```env
+   VITE_USE_MSW=true
+   ```
+
+⚠️ **Atenção:** Isso é apenas para demos. Em produção real, você deve usar um backend real.
 
 ### Dados Mockados Disponíveis
 
