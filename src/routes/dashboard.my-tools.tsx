@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router"
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import { useMyTools } from "@/hooks/useMyTools"
 import { useDeleteTool } from "@/hooks/useDeleteTool"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Input } from "@/components/ui/input"
 import { ErrorDisplay } from "@/components/ErrorDisplay"
 import { CreateToolDialog } from "@/components/CreateToolDialog"
 import {
@@ -16,7 +17,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { Pencil, Trash2, Plus } from "lucide-react"
+import { Pencil, Trash2, Plus, Search, X } from "lucide-react"
 import type { Tool, Category } from "@/types"
 
 const categoryLabels: Record<Category, string> = {
@@ -45,9 +46,31 @@ function MyToolsPage() {
   const [editTool, setEditTool] = useState<Tool | null>(null)
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [toolToDelete, setToolToDelete] = useState<Tool | null>(null)
+  const [searchQuery, setSearchQuery] = useState("")
+  const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
   
   const { data: tools, isLoading, error, refetch } = useMyTools()
   const { mutate: deleteTool, isPending: isDeleting } = useDeleteTool()
+
+  // Filtrar ferramentas no frontend
+  const filteredTools = useMemo(() => {
+    if (!tools) return []
+    
+    return tools.filter((tool) => {
+      // Filtro por nome (busca no título e descrição)
+      const matchesSearch = 
+        !searchQuery ||
+        tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        tool.description.toLowerCase().includes(searchQuery.toLowerCase())
+      
+      // Filtro por categoria
+      const matchesCategory = 
+        selectedCategories.length === 0 ||
+        selectedCategories.includes(tool.category)
+      
+      return matchesSearch && matchesCategory
+    })
+  }, [tools, searchQuery, selectedCategories])
 
   const handleEdit = (tool: Tool) => {
     setEditTool(tool)
@@ -115,9 +138,118 @@ function MyToolsPage() {
         </Button>
       </div>
 
-      {tools && tools.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {tools.map((tool) => (
+      {/* Filtros - Layout Compacto */}
+      <Card className="mb-6">
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            {/* Busca por Nome */}
+            <div>
+              <label className="text-sm font-medium mb-2 block">Buscar por Nome</label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  type="text"
+                  placeholder="Digite o nome da ferramenta..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
+              </div>
+            </div>
+
+            {/* Filtro de Categorias - Compacto */}
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <label className="text-sm font-medium">Filtrar por Categoria</label>
+                {selectedCategories.length > 0 && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSelectedCategories([])}
+                    className="h-7 px-2 text-xs"
+                  >
+                    <X className="h-3 w-3 mr-1" />
+                    Limpar
+                  </Button>
+                )}
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {Object.entries(categoryLabels).map(([value, label]) => {
+                  const category = value as Category
+                  const isSelected = selectedCategories.includes(category)
+                  return (
+                    <Button
+                      key={category}
+                      variant={isSelected ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => {
+                        if (isSelected) {
+                          setSelectedCategories(selectedCategories.filter((c) => c !== category))
+                        } else {
+                          setSelectedCategories([...selectedCategories, category])
+                        }
+                      }}
+                      className="h-8 text-xs"
+                    >
+                      {label}
+                    </Button>
+                  )
+                })}
+              </div>
+              {selectedCategories.length > 0 && (
+                <div className="mt-3 pt-3 border-t">
+                  <p className="text-xs text-muted-foreground mb-2">
+                    {selectedCategories.length} categoria{selectedCategories.length !== 1 ? "s" : ""} selecionada{selectedCategories.length !== 1 ? "s" : ""}:
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {selectedCategories.map((category) => (
+                      <Badge
+                        key={category}
+                        variant="secondary"
+                        className="cursor-pointer"
+                        onClick={() => setSelectedCategories(selectedCategories.filter((c) => c !== category))}
+                      >
+                        {categoryLabels[category]}
+                        <X className="h-3 w-3 ml-1" />
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Contador de resultados */}
+          {tools && tools.length > 0 && (
+            <div className="mb-4 text-sm text-muted-foreground">
+              {filteredTools.length === tools.length ? (
+                <span>Mostrando todas as {tools.length} ferramenta{tools.length !== 1 ? "s" : ""}</span>
+              ) : (
+                <span>
+                  Mostrando {filteredTools.length} de {tools.length} ferramenta{tools.length !== 1 ? "s" : ""}
+                  {(searchQuery || selectedCategories.length > 0) && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => {
+                        setSearchQuery("")
+                        setSelectedCategories([])
+                      }}
+                      className="ml-2 h-6 text-xs"
+                    >
+                      Limpar filtros
+                    </Button>
+                  )}
+                </span>
+              )}
+            </div>
+          )}
+
+                {filteredTools.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {filteredTools.map((tool) => (
             <Card key={tool.id} className="flex flex-col">
               {tool.image_url && (
                 <img
@@ -170,11 +302,11 @@ function MyToolsPage() {
                   Deletar
                 </Button>
               </CardFooter>
-            </Card>
-          ))}
-        </div>
-      ) : (
-        <div className="text-center py-16 px-4">
+                </Card>
+              ))}
+              </div>
+            ) : (
+              <div className="text-center py-16 px-4">
           <div className="max-w-md mx-auto">
             <div className="mb-4 flex justify-center">
               <div className="rounded-full bg-muted p-4">
