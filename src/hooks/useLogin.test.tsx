@@ -25,7 +25,7 @@ vi.mock('sonner', () => ({
 }))
 
 vi.mock('@tanstack/react-router', () => ({
-  useNavigate: () => vi.fn(({ to }: { to: string }) => {}),
+  useNavigate: () => vi.fn(() => {}),
 }))
 
 function createWrapper() {
@@ -42,7 +42,6 @@ function createWrapper() {
 
 describe('useLogin', () => {
   const mockLogin = vi.fn()
-  const mockNavigate = vi.fn()
 
   beforeEach(() => {
     vi.clearAllMocks()
@@ -80,7 +79,7 @@ describe('useLogin', () => {
         username: 'testuser',
         password: 'password123',
       })
-      expect(mockLogin).toHaveBeenCalledWith('mock-token', mockResponse.data.user)
+      expect(mockLogin).toHaveBeenCalledWith('mock-token', undefined, mockResponse.data.user)
       expect(toast.success).toHaveBeenCalledWith('Login realizado com sucesso!')
     })
   })

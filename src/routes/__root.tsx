@@ -1,6 +1,5 @@
-import { createRootRoute, Outlet, Link } from "@tanstack/react-router"
+import { createRootRoute, Outlet } from "@tanstack/react-router"
 import { Toaster } from "@/components/ui/sonner"
-import { Button } from "@/components/ui/button"
 import { Header } from "@/components/Header"
 import { ThemeProvider } from "next-themes"
 

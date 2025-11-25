@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
-import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { ErrorDisplay } from "@/components/ErrorDisplay"
 import { CategoryFilter } from "@/components/CategoryFilter"
 import { LocationFilter } from "@/components/LocationFilter"

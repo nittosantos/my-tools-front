@@ -52,7 +52,7 @@ describe('AuthContext', () => {
     })
 
     await act(async () => {
-      await result.current.login('mock-token', mockUser)
+      await result.current.login('mock-token', undefined, mockUser)
     })
 
     expect(result.current.isAuthenticated).toBe(true)
@@ -74,7 +74,7 @@ describe('AuthContext', () => {
     })
 
     await act(async () => {
-      await result.current.login('mock-token', mockUser)
+      await result.current.login('mock-token', undefined, mockUser)
     })
 
     expect(result.current.isAuthenticated).toBe(true)

@@ -76,13 +76,6 @@ export function useTools(options?: UseToolsOptions): UseToolsReturn {
   const hasNext = !!paginatedData?.next
   const hasPrevious = !!paginatedData?.previous
 
-  // Extrair número da página da URL next/previous
-  const getPageFromUrl = (url: string | null): number | null => {
-    if (!url) return null
-    const match = url.match(/[?&]page=(\d+)/)
-    return match ? parseInt(match[1], 10) : null
-  }
-
   return {
     data: paginatedData?.results,
     isLoading: query.isLoading,

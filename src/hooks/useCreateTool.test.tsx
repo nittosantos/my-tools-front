@@ -58,6 +58,8 @@ describe('useCreateTool', () => {
       description: 'Descrição',
       category: 'ferramentas_eletricas',
       price_per_day: 100,
+      state: 'SP',
+      city: 'São Paulo',
       image: file,
     })
 
@@ -83,6 +85,8 @@ describe('useCreateTool', () => {
       description: 'Test',
       category: 'outros',
       price_per_day: 10,
+      state: 'SP',
+      city: 'São Paulo',
     })
 
     await waitFor(() => {

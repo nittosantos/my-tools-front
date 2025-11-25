@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { differenceInDays } from "date-fns"
@@ -20,7 +20,6 @@ export const Route = createFileRoute("/tools/$toolId/rent")({
 
 function CheckoutPage() {
   const { toolId } = Route.useParams()
-  const navigate = useNavigate()
   const id = parseInt(toolId)
   const { data: tool, isLoading: toolLoading, error: toolError, refetch } = useTool(id)
   const { mutate: createRental, isPending } = useCreateRental()

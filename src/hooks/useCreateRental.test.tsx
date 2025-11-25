@@ -19,7 +19,7 @@ vi.mock('sonner', () => ({
 }))
 
 vi.mock('@tanstack/react-router', () => ({
-  useNavigate: () => vi.fn(({ to }: { to: string }) => {}),
+  useNavigate: () => vi.fn(() => {}),
 }))
 
 function createWrapper() {

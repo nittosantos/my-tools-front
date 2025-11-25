@@ -30,7 +30,7 @@ import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { ImageUpload } from "@/components/ImageUpload"
 import { useCreateTool } from "@/hooks/useCreateTool"
 import { useUpdateTool } from "@/hooks/useUpdateTool"
-import { createToolSchema, type CreateToolFormData, type UpdateToolFormData } from "@/lib/schemas"
+import { createToolSchema, type CreateToolFormData } from "@/lib/schemas"
 import type { Tool, Category } from "@/types"
 
 const BRAZILIAN_STATES = [
@@ -116,7 +116,7 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
 
   const onSubmit = (data: CreateToolFormData) => {
     if (isEditMode && tool) {
-      const updateData: UpdateToolFormData = {
+      const updateData = {
         id: tool.id,
         ...data,
       }

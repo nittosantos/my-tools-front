@@ -94,7 +94,10 @@ describe('api', () => {
     }
     
     // Restaurar
-    window.location = originalLocation
+    Object.defineProperty(window, 'location', {
+      value: originalLocation,
+      writable: true,
+    })
   })
 
   it('não deve remover token em erros que não são 401', async () => {

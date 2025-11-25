@@ -27,7 +27,7 @@ describe('ImageUpload', () => {
     expect(img).toBeInTheDocument()
     // O botão não tem aria-label, então vamos buscar pelo tipo e posição
     const buttons = screen.getAllByRole('button')
-    const removeButton = buttons.find(btn => btn.type === 'button' && btn.className.includes('destructive'))
+    const removeButton = buttons.find(btn => (btn as HTMLButtonElement).type === 'button' && btn.className.includes('destructive'))
     expect(removeButton).toBeInTheDocument()
   })
 
@@ -126,7 +126,7 @@ describe('ImageUpload', () => {
 
     // Buscar o botão de remover (botão destructive)
     const buttons = screen.getAllByRole('button')
-    const removeButton = buttons.find(btn => btn.type === 'button' && btn.className.includes('destructive'))
+    const removeButton = buttons.find(btn => (btn as HTMLButtonElement).type === 'button' && btn.className.includes('destructive'))
     expect(removeButton).toBeInTheDocument()
     
     if (removeButton) {

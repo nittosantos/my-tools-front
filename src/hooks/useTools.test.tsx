@@ -47,7 +47,7 @@ describe('useTools', () => {
     })
 
     await waitFor(() => {
-      expect(result.current.isSuccess).toBe(true)
+      expect(result.current.isLoading).toBe(false)
     })
 
     expect(result.current.data).toEqual(mockTools)
@@ -62,7 +62,7 @@ describe('useTools', () => {
     })
 
     await waitFor(() => {
-      expect(result.current.isError).toBe(true)
+      expect(result.current.error).toBeTruthy()
     })
   })
 })
