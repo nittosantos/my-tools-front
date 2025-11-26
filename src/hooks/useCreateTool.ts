@@ -17,7 +17,7 @@ export function useCreateTool() {
       formData.append("city", data.city)
       
       if (data.image instanceof File) {
-        formData.append("image", data.image)
+        formData.append("photo", data.image)
       }
 
       const response = await api.post<Tool>("/tools/", formData, {
