@@ -35,7 +35,7 @@ export interface Tool {
   title: string
   description: string
   category: Category
-  price_per_day: number
+  price_per_day: number | string // Backend pode retornar como string (ex: "120.00")
   image_url?: string
   available: boolean
   state?: string | null

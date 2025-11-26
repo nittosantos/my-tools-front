@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { differenceInDays } from "date-fns"
 import { useTool } from "@/hooks/useTool"
 import { useCreateRental } from "@/hooks/useCreateRental"
+import { formatPrice } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
@@ -44,7 +45,8 @@ function CheckoutPage() {
         const start = new Date(startDate)
         const end = new Date(endDate)
         const days = differenceInDays(end, start) + 1
-        const total = days * tool.price_per_day
+        const price = typeof tool.price_per_day === 'string' ? parseFloat(tool.price_per_day) : tool.price_per_day
+        const total = days * price
         setCalculatedTotal(total)
       } catch {
         setCalculatedTotal(null)
@@ -84,7 +86,7 @@ function CheckoutPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Alugar: {tool.title}</CardTitle>
           <CardDescription>
-            Preço por dia: R$ {tool.price_per_day.toFixed(2)}
+            Preço por dia: R$ {formatPrice(tool.price_per_day)}
           </CardDescription>
         </CardHeader>
         <CardContent>

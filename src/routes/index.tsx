@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
 import { useState } from "react"
 import { useTools } from "@/hooks/useTools"
+import { formatPrice } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -169,7 +170,7 @@ function HomePage() {
                         </div>
                       )}
                       <p className="text-lg font-semibold mt-4">
-                        R$ {tool.price_per_day.toFixed(2)}/dia
+                        R$ {formatPrice(tool.price_per_day)}/dia
                       </p>
                     </CardContent>
                     <CardFooter>

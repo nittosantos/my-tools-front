@@ -63,7 +63,8 @@ export const rentalsHandlers = [
       Math.ceil(
         (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
       ) + 1;
-    const totalPrice = days * tool.price_per_day;
+    const price = typeof tool.price_per_day === 'string' ? parseFloat(tool.price_per_day) : tool.price_per_day
+    const totalPrice = days * price;
 
     const newRental: Rental = {
       id: mockRentals.length + 1,

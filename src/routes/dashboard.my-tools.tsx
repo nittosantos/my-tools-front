@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router"
 import { useState, useMemo } from "react"
 import { useMyTools } from "@/hooks/useMyTools"
 import { useDeleteTool } from "@/hooks/useDeleteTool"
+import { formatPrice } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -278,7 +279,7 @@ function MyToolsPage() {
                 )}
                 <div className="flex items-center justify-between">
                   <p className="text-lg font-semibold">
-                    R$ {tool.price_per_day.toFixed(2)}/dia
+                    R$ {formatPrice(tool.price_per_day)}/dia
                   </p>
                   <Badge variant={tool.available ? "default" : "secondary"}>
                     {tool.available ? "Disponível" : "Indisponível"}

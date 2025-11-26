@@ -99,7 +99,7 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
           title: tool.title,
           description: tool.description,
           category: tool.category,
-          price_per_day: tool.price_per_day,
+          price_per_day: typeof tool.price_per_day === 'string' ? parseFloat(tool.price_per_day) : tool.price_per_day,
         state: tool.state || "",
         city: tool.city || "",
           image: tool.image_url || undefined,

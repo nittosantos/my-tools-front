@@ -72,9 +72,13 @@ export const toolsHandlers = [
               new Date(b.created_at || 0).getTime()
             );
           case "price_per_day": // Preço crescente
-            return a.price_per_day - b.price_per_day;
+            const priceA = typeof a.price_per_day === 'string' ? parseFloat(a.price_per_day) : a.price_per_day
+            const priceB = typeof b.price_per_day === 'string' ? parseFloat(b.price_per_day) : b.price_per_day
+            return priceA - priceB;
           case "-price_per_day": // Preço decrescente
-            return b.price_per_day - a.price_per_day;
+            const priceA2 = typeof a.price_per_day === 'string' ? parseFloat(a.price_per_day) : a.price_per_day
+            const priceB2 = typeof b.price_per_day === 'string' ? parseFloat(b.price_per_day) : b.price_per_day
+            return priceB2 - priceA2;
           default:
             return 0;
         }
