@@ -1,83 +1,106 @@
-import { useQuery } from "@tanstack/react-query"
-import api from "@/lib/api"
-import type { Tool, Category, PaginatedResponse } from "@/types"
+import { useQuery } from "@tanstack/react-query";
+import api from "@/lib/api";
+import type { Tool, Category, PaginatedResponse } from "@/types";
 
 interface UseToolsOptions {
-  categories?: Category[]
-  state?: string
-  cities?: string[]
-  search?: string
-  ordering?: string
-  page?: number
+  categories?: Category[];
+  state?: string;
+  cities?: string[];
+  search?: string;
+  ordering?: string;
+  page?: number;
 }
 
 interface UseToolsReturn {
-  data: Tool[] | undefined
-  isLoading: boolean
-  error: Error | null
-  refetch: () => void
+  data: Tool[] | undefined;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
   pagination?: {
-    count: number
-    currentPage: number
-    totalPages: number
-    hasNext: boolean
-    hasPrevious: boolean
-    nextPage: number | null
-    previousPage: number | null
-  }
+    count: number;
+    currentPage: number;
+    totalPages: number;
+    hasNext: boolean;
+    hasPrevious: boolean;
+    nextPage: number | null;
+    previousPage: number | null;
+  };
 }
 
 export function useTools(options?: UseToolsOptions): UseToolsReturn {
-  const { categories = [], state, cities = [], search, ordering, page = 1 } = options || {}
+  const {
+    categories = [],
+    state,
+    cities = [],
+    search,
+    ordering,
+    page = 1,
+  } = options || {};
 
   const query = useQuery({
-    queryKey: ["tools", ...categories.sort(), state, ...cities.sort(), search, ordering, page], // Incluir filtros, busca, ordenação e página na queryKey
+    queryKey: [
+      "tools",
+      ...categories.sort(),
+      state,
+      ...cities.sort(),
+      search,
+      ordering,
+      page,
+    ], // Incluir filtros, busca, ordenação e página na queryKey
     queryFn: async () => {
-      const params = new URLSearchParams()
+      const params = new URLSearchParams();
       categories.forEach((category) => {
-        params.append("category", category)
-      })
+        params.append("category", category);
+      });
       if (state) {
-        params.append("state", state)
+        params.append("state", state);
       }
       cities.forEach((city) => {
-        params.append("city", city)
-      })
+        params.append("city", city);
+      });
       if (search) {
-        params.append("search", search)
+        params.append("search", search);
       }
       if (ordering) {
-        params.append("ordering", ordering)
+        params.append("ordering", ordering);
       }
-      params.append("page", page.toString())
+      params.append("page", page.toString());
 
-      const url = `/tools/?${params.toString()}`
-      const response = await api.get<PaginatedResponse<Tool>>(url)
-      return response.data
+      const url = `/tools/?${params.toString()}`;
+      const response = await api.get<PaginatedResponse<Tool>>(url);
+      return response.data;
     },
-  })
+  });
 
   // Se a resposta não tiver paginação (formato antigo), retornar como array
   if (query.data && !("count" in query.data)) {
+    const dataArray = Array.isArray(query.data) ? query.data : [];
     return {
-      data: query.data as unknown as Tool[],
+      data: dataArray as Tool[],
       isLoading: query.isLoading,
       error: query.error,
       refetch: query.refetch,
-    }
+    };
   }
 
-  const paginatedData = query.data as PaginatedResponse<Tool> | undefined
+  const paginatedData = query.data as PaginatedResponse<Tool> | undefined;
+
+  // Garantir que results sempre seja um array
+  // A API retorna { count: 0, next: null, previous: null, results: [] } quando não há dados
+  // Mas também protegemos contra casos onde results possa ser null/undefined
+  const results = Array.isArray(paginatedData?.results)
+    ? paginatedData.results
+    : [];
 
   // Calcular informações de paginação
-  const count = paginatedData?.count || 0
-  const pageSize = 9 // PAGE_SIZE do backend (9 itens = 3 linhas x 3 colunas)
-  const totalPages = Math.ceil(count / pageSize)
-  const hasNext = !!paginatedData?.next
-  const hasPrevious = !!paginatedData?.previous
+  const count = paginatedData?.count || 0;
+  const pageSize = 9; // PAGE_SIZE do backend (9 itens = 3 linhas x 3 colunas)
+  const totalPages = Math.ceil(count / pageSize);
+  const hasNext = !!paginatedData?.next;
+  const hasPrevious = !!paginatedData?.previous;
 
   return {
-    data: paginatedData?.results,
+    data: results,
     isLoading: query.isLoading,
     error: query.error,
     refetch: query.refetch,
@@ -90,6 +113,5 @@ export function useTools(options?: UseToolsOptions): UseToolsReturn {
       nextPage: hasNext ? page + 1 : null,
       previousPage: hasPrevious ? page - 1 : null,
     },
-  }
+  };
 }
-
