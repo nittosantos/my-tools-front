@@ -141,11 +141,13 @@ function HomePage() {
                 {tools.map((tool) => (
                   <Card key={tool.id} className="flex flex-col">
                     {tool.image_url && (
-                      <img
-                        src={tool.image_url}
-                        alt={tool.title}
-                        className="w-full h-48 object-cover rounded-t-lg"
-                      />
+                      <div className="w-full h-48 overflow-hidden rounded-t-lg bg-muted">
+                        <img
+                          src={tool.image_url}
+                          alt={tool.title}
+                          className="w-full h-full object-cover object-center"
+                        />
+                      </div>
                     )}
                     <CardHeader>
                       <div className="flex items-start justify-between">
