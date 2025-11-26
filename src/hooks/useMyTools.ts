@@ -6,7 +6,7 @@ import { useAuth } from "./useAuth"
 export function useMyTools() {
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ["my-tools"],
     queryFn: async () => {
       const response = await api.get<Tool[]>("/tools/my/")
@@ -21,5 +21,12 @@ export function useMyTools() {
     // Manter dados em cache mesmo após erro para não quebrar na navegação
     placeholderData: (previousData) => previousData,
   })
-}
 
+  // Garantir que data sempre seja um array, mesmo quando a API retornar null/undefined
+  const data = Array.isArray(query.data) ? query.data : []
+
+  return {
+    ...query,
+    data,
+  }
+}

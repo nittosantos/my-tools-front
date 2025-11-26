@@ -48,26 +48,27 @@ function MyToolsPage() {
   const [toolToDelete, setToolToDelete] = useState<Tool | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategories, setSelectedCategories] = useState<Category[]>([])
-  
+
   const { data: tools, isLoading, error, refetch } = useMyTools()
   const { mutate: deleteTool, isPending: isDeleting } = useDeleteTool()
 
   // Filtrar ferramentas no frontend
   const filteredTools = useMemo(() => {
-    if (!tools) return []
-    
+    // Garantir que tools sempre seja um array antes de usar .filter()
+    if (!tools || !Array.isArray(tools)) return []
+
     return tools.filter((tool) => {
       // Filtro por nome (busca no título e descrição)
-      const matchesSearch = 
+      const matchesSearch =
         !searchQuery ||
         tool.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         tool.description.toLowerCase().includes(searchQuery.toLowerCase())
-      
+
       // Filtro por categoria
-      const matchesCategory = 
+      const matchesCategory =
         selectedCategories.length === 0 ||
         selectedCategories.includes(tool.category)
-      
+
       return matchesSearch && matchesCategory
     })
   }, [tools, searchQuery, selectedCategories])
@@ -380,4 +381,3 @@ function MyToolsPage() {
     </div>
   )
 }
-
