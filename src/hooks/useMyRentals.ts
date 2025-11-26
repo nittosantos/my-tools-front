@@ -6,7 +6,7 @@ import { useAuth } from "./useAuth"
 export function useMyRentals() {
   const { isAuthenticated, isLoading: isAuthLoading } = useAuth()
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ["my-rentals"],
     queryFn: async () => {
       const response = await api.get<Rental[]>("/rentals/my/")
@@ -19,5 +19,12 @@ export function useMyRentals() {
     // Manter dados em cache mesmo após erro para não quebrar na navegação
     placeholderData: (previousData) => previousData,
   })
-}
 
+  // Garantir que data sempre seja um array, mesmo quando a API retornar null/undefined
+  const data = Array.isArray(query.data) ? query.data : []
+
+  return {
+    ...query,
+    data,
+  }
+}
