@@ -141,11 +141,21 @@ function HomePage() {
                 {tools.map((tool) => (
                   <Card key={tool.id} className="flex flex-col">
                     {tool.image_url && (
-                      <div className="w-full h-48 overflow-hidden rounded-t-lg bg-muted">
+                      <div className="w-full h-48 rounded-t-lg bg-muted overflow-hidden flex items-center justify-center">
                         <img
                           src={tool.image_url}
                           alt={tool.title}
-                          className="w-full h-full object-cover object-center"
+                          className="max-w-full max-h-full w-auto h-auto object-contain"
+                          style={{
+                            objectFit: 'contain',
+                            objectPosition: 'center',
+                            display: 'block'
+                          }}
+                          loading="lazy"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
+                          }}
                         />
                       </div>
                     )}
