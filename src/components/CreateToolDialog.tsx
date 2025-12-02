@@ -92,6 +92,9 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
   const isPending = isCreating || isUpdating
   const isEditMode = !!tool
 
+  // Key para forçar remontagem do form quando tool ou open mudar
+  const formKey = tool ? `edit-${tool.id}` : `create-${open}`
+
   const form = useForm<CreateToolFormData>({
     resolver: zodResolver(createToolSchema),
     defaultValues: tool
@@ -100,8 +103,8 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
           description: tool.description,
           category: tool.category,
           price_per_day: typeof tool.price_per_day === 'string' ? parseFloat(tool.price_per_day) : tool.price_per_day,
-        state: tool.state || "",
-        city: tool.city || "",
+          state: tool.state || "",
+          city: tool.city || "",
           image: tool.image_url || undefined,
         }
       : {
@@ -109,8 +112,8 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
           description: "",
           category: "outros",
           price_per_day: 0,
-        state: "",
-        city: "",
+          state: "",
+          city: "",
         },
   })
 
@@ -148,7 +151,7 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
           </DialogDescription>
         </DialogHeader>
 
-        <Form {...form}>
+        <Form {...form} key={formKey}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <FormField
               control={form.control}
@@ -191,7 +194,7 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
                     <FormLabel>Categoria</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -242,7 +245,7 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
                     <FormLabel>Estado (UF)</FormLabel>
                     <Select
                       onValueChange={field.onChange}
-                      defaultValue={field.value}
+                      value={field.value}
                     >
                       <FormControl>
                         <SelectTrigger>
@@ -320,4 +323,3 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
     </Dialog>
   )
 }
-
