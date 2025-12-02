@@ -279,7 +279,7 @@ function MyToolsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="flex-grow">
-                <p className="text-sm text-muted-foreground line-clamp-2 mb-4">
+                <p className="text-sm text-muted-foreground line-clamp-2 mb-4 break-words">
                   {tool.description}
                 </p>
                 {tool.city && tool.state && (

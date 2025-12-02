@@ -37,7 +37,7 @@ function ToolDetailsPage() {
   const { isAuthenticated } = useAuth()
   const id = parseInt(toolId)
   const { data: tool, isLoading, error, refetch } = useTool(id)
-  
+
   // Se estiver na rota de rent (/tools/$toolId/rent), renderizar apenas o Outlet (checkout)
   const isRentRoute = location.pathname.includes('/rent')
 
@@ -109,7 +109,7 @@ function ToolDetailsPage() {
           <CardContent className="space-y-4">
             <div>
               <h3 className="font-semibold mb-2">Descrição</h3>
-              <p className="text-muted-foreground">{tool.description}</p>
+              <p className="text-muted-foreground break-words whitespace-pre-wrap">{tool.description}</p>
             </div>
 
             <div>
@@ -140,4 +140,3 @@ function ToolDetailsPage() {
     </div>
   )
 }
-

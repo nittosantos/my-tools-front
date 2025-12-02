@@ -41,7 +41,7 @@ function HomePage() {
   const [searchQuery, setSearchQuery] = useState<string>("")
   const [ordering, setOrdering] = useState<string>("")
   const [currentPage, setCurrentPage] = useState<number>(1)
-  
+
   const { data: tools, isLoading, error, refetch, pagination } = useTools({
     categories: selectedCategories.length > 0 ? selectedCategories : undefined,
     state: selectedState || undefined,
@@ -80,7 +80,7 @@ function HomePage() {
   return (
     <div>
       <h1 className="text-4xl font-bold mb-8">Ferramentas Disponíveis</h1>
-      
+
       <div className="space-y-6 mb-8">
         <div className="text-sm text-muted-foreground text-right">
           {error ? null : isLoading ? (
@@ -96,7 +96,7 @@ function HomePage() {
             <span>Nenhuma ferramenta encontrada</span>
           )}
         </div>
-        
+
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 items-start">
           <div className="lg:col-span-1 space-y-4">
             <SearchAndSortCard
@@ -116,7 +116,7 @@ function HomePage() {
               onCitiesChange={handleCitiesChange}
             />
           </div>
-          
+
           <div className="lg:col-span-3">
             {error ? (
               <ErrorDisplay onRetry={() => refetch()} />
@@ -171,7 +171,7 @@ function HomePage() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="flex-grow">
-                      <p className="text-sm text-muted-foreground line-clamp-3">
+                      <p className="text-sm text-muted-foreground line-clamp-2 break-words">
                         {tool.description}
                       </p>
                       {tool.city && tool.state && (
@@ -286,4 +286,3 @@ function HomePage() {
     </div>
   )
 }
-
