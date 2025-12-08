@@ -61,16 +61,31 @@ test('deve fazer logout corretamente', async ({ page }) => {
   // 2. Verificar que está logado (dashboard visível)
   await expect(page).toHaveURL(/\/dashboard/)
 
-  // 3. Fazer logout
-  const logoutButton = page.getByRole('button', { name: /sair|logout/i })
-  await expect(logoutButton).toBeVisible()
+  // 3. Abrir o dropdown do usuário
+  // Estratégia simples: encontrar todos os botões no header e pegar o último
+  // (o primeiro é o ThemeToggle, o último é o botão do usuário)
+  const header = page.locator('header')
+  await expect(header).toBeVisible()
+  
+  const headerButtons = header.getByRole('button')
+  const buttonCount = await headerButtons.count()
+  
+  // Pegar o último botão (que deve ser o do usuário)
+  const userMenuButton = headerButtons.nth(buttonCount - 1)
+  
+  await expect(userMenuButton).toBeVisible({ timeout: 5000 })
+  await userMenuButton.click()
+
+  // 4. Clicar no botão "Sair" dentro do dropdown
+  const logoutButton = page.getByRole('menuitem', { name: /sair/i })
+  await expect(logoutButton).toBeVisible({ timeout: 5000 })
   await logoutButton.click()
 
-  // 4. Aguardar que o logout processe - verificar que o botão "Entrar" aparece no header
+  // 5. Aguardar que o logout processe - verificar que o botão "Entrar" aparece no header
   // Isso indica que o logout foi bem-sucedido (estado mudou)
-  await expect(page.getByRole('link', { name: 'Entrar' })).toBeVisible({ timeout: 3000 })
+  await expect(page.getByRole('link', { name: 'Entrar' })).toBeVisible({ timeout: 5000 })
 
-  // 5. Verificar que não está mais autenticado
+  // 6. Verificar que não está mais autenticado
   // Tentar acessar dashboard deve redirecionar para login
   await page.goto('/dashboard/my-tools')
   await expect(page).toHaveURL(/\/login/)

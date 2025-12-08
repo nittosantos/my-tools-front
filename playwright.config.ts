@@ -66,11 +66,12 @@ export default defineConfig({
     // },
   ],
 
-  // Servidor de desenvolvimento (opcional - pode rodar manualmente)
-  // webServer: {
-  //   command: 'npm run dev',
-  //   url: 'http://localhost:5173',
-  //   reuseExistingServer: !process.env.CI,
-  // },
+  // Servidor de desenvolvimento - inicia automaticamente antes dos testes
+  webServer: {
+    command: 'npm run dev',
+    url: 'http://localhost:5173',
+    reuseExistingServer: !process.env.CI, // Reutiliza servidor se já estiver rodando (exceto em CI)
+    timeout: 120 * 1000, // 2 minutos para iniciar
+  },
 })
 
