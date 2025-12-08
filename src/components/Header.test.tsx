@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@/test/test-utils'
+import userEvent from '@testing-library/user-event'
 import { Header } from './Header'
 import * as AuthContext from '@/contexts/AuthContext'
 
@@ -8,10 +9,12 @@ vi.mock('@/contexts/AuthContext', () => ({
   useAuth: vi.fn(),
 }))
 
-// Mock do TanStack Router Link e useLocation
+// Mock do TanStack Router Link, useLocation e useNavigate
 const mockUseLocation = vi.fn(() => ({
   pathname: '/',
 }))
+
+const mockNavigate = vi.fn()
 
 vi.mock('@tanstack/react-router', async () => {
   const actual = await vi.importActual('@tanstack/react-router')
@@ -23,6 +26,7 @@ vi.mock('@tanstack/react-router', async () => {
       </a>
     ),
     useLocation: () => mockUseLocation(),
+    useNavigate: () => mockNavigate,
   }
 })
 
@@ -51,7 +55,9 @@ describe('Header', () => {
     expect(screen.queryByText('Minhas Ferramentas')).not.toBeInTheDocument()
   })
 
-  it('deve mostrar links do dashboard quando autenticado', () => {
+  it('deve mostrar links do dashboard quando autenticado', async () => {
+    const user = userEvent.setup()
+    
     vi.mocked(AuthContext.useAuth).mockReturnValue({
       isAuthenticated: true,
       user: { id: 1, username: 'testuser', email: 'test@example.com' },
@@ -63,10 +69,20 @@ describe('Header', () => {
 
     render(<Header />)
 
+    // O nome do usuário deve estar visível
+    expect(screen.getByText('testuser')).toBeInTheDocument()
+    
+    // Abrir o dropdown clicando no botão que contém o avatar
+    // O botão contém o texto "testuser", então podemos encontrá-lo assim
+    const avatarButton = screen.getByText('testuser').closest('button')
+    if (avatarButton) {
+      await user.click(avatarButton)
+    }
+
+    // Agora os links devem estar visíveis
     expect(screen.getByText('Minhas Ferramentas')).toBeInTheDocument()
     expect(screen.getByText('Meus Aluguéis')).toBeInTheDocument()
     expect(screen.getByText('Aluguéis Recebidos')).toBeInTheDocument()
-    expect(screen.getByText('testuser')).toBeInTheDocument()
     expect(screen.getByText('Sair')).toBeInTheDocument()
     expect(screen.queryByText('Entrar')).not.toBeInTheDocument()
   })

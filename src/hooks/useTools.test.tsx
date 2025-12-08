@@ -51,7 +51,7 @@ describe('useTools', () => {
     })
 
     expect(result.current.data).toEqual(mockTools)
-    expect(api.default.get).toHaveBeenCalledWith('/tools/')
+    expect(api.default.get).toHaveBeenCalledWith('/tools/?page=1')
   })
 
   it('deve lidar com erro ao buscar ferramentas', async () => {

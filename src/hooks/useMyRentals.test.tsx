@@ -3,6 +3,7 @@ import { renderHook, waitFor } from '@testing-library/react'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useMyRentals } from './useMyRentals'
 import * as api from '@/lib/api'
+import * as useAuthModule from './useAuth'
 
 vi.mock('@/lib/api', () => ({
   default: {
@@ -10,10 +11,18 @@ vi.mock('@/lib/api', () => ({
   },
 }))
 
+vi.mock('./useAuth', () => ({
+  useAuth: vi.fn(),
+}))
+
 function createWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: {
-      queries: { retry: false },
+      queries: { 
+        retry: false,
+        gcTime: 0, // Não manter cache
+        staleTime: 0, // Sempre considerar stale
+      },
       mutations: { retry: false },
     },
   })
@@ -25,6 +34,15 @@ function createWrapper() {
 describe('useMyRentals', () => {
   beforeEach(() => {
     vi.clearAllMocks()
+    // Mock padrão do useAuth
+    vi.mocked(useAuthModule.useAuth).mockReturnValue({
+      isAuthenticated: true,
+      isLoading: false,
+      user: { id: 1, username: 'testuser', email: 'test@example.com' },
+      login: vi.fn(),
+      logout: vi.fn(),
+      refreshUser: vi.fn(),
+    })
   })
 
   it('deve buscar lista de meus aluguéis', async () => {
@@ -55,15 +73,24 @@ describe('useMyRentals', () => {
   })
 
   it('deve lidar com erro ao buscar meus aluguéis', async () => {
-    vi.mocked(api.default.get).mockRejectedValue(new Error('Network error'))
+    const error = new Error('Network error')
+    vi.mocked(api.default.get).mockRejectedValue(error)
 
     const { result } = renderHook(() => useMyRentals(), {
       wrapper: createWrapper(),
     })
 
-    await waitFor(() => {
-      expect(result.current.isError).toBe(true)
-    })
+    // Aguardar que a query seja executada e falhe (com retry: 1, pode demorar um pouco mais)
+    await waitFor(
+      () => {
+        expect(result.current.isError).toBe(true)
+      },
+      { timeout: 5000 }
+    )
+
+    expect(result.current.error).toBeTruthy()
+    // Verificar que a API foi chamada (pode ter sido chamada mais de uma vez devido ao retry)
+    expect(api.default.get).toHaveBeenCalled()
   })
 })
 

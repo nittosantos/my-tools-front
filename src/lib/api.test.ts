@@ -65,6 +65,8 @@ describe('api', () => {
 
   it('deve remover token e redirecionar quando recebe erro 401', async () => {
     localStorage.setItem('token', 'invalid-token')
+    // Garantir que não há refresh_token para forçar o logout
+    localStorage.removeItem('refresh_token')
     
     // Mock window.location
     const originalLocation = window.location
@@ -76,7 +78,10 @@ describe('api', () => {
       response: {
         status: 401,
       },
-    }
+      config: {
+        url: '/test',
+      },
+    } as any
     
     const responseHandlers = (api.interceptors.response as any).handlers || []
     if (responseHandlers.length > 0) {
@@ -87,6 +92,9 @@ describe('api', () => {
         } catch {
           // Esperado - o interceptor rejeita
         }
+        
+        // Aguardar um pouco para garantir que o localStorage foi atualizado
+        await new Promise(resolve => setTimeout(resolve, 10))
         
         expect(localStorage.getItem('token')).toBe(null)
         expect(mockLocation.href).toBe('/login')
