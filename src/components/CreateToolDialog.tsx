@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useMemo } from "react"
+import { useMemo, useEffect } from "react"
 import {
   Dialog,
   DialogContent,
@@ -131,6 +131,13 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
     resolver: zodResolver(createToolSchema),
     defaultValues: defaultValues as CreateToolFormData,
   })
+
+  // Resetar o form quando tool ou open mudarem
+  useEffect(() => {
+    if (open) {
+      form.reset(defaultValues)
+    }
+  }, [open, tool?.id, defaultValues])
 
   const onSubmit = (data: CreateToolFormData) => {
     if (isEditMode && tool) {
