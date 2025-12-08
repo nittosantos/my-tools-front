@@ -4,6 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { differenceInDays } from "date-fns"
 import { useTool } from "@/hooks/useTool"
 import { useCreateRental } from "@/hooks/useCreateRental"
+import { useAuth } from "@/hooks/useAuth"
 import { formatPrice } from "@/lib/utils"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
@@ -24,7 +25,11 @@ function CheckoutPage() {
   const id = parseInt(toolId)
   const { data: tool, isLoading: toolLoading, error: toolError, refetch } = useTool(id)
   const { mutate: createRental, isPending } = useCreateRental()
+  const { user } = useAuth()
   const [calculatedTotal, setCalculatedTotal] = useState<number | null>(null)
+  
+  // Verificar se o usuário é o dono da ferramenta
+  const isOwner = !!(user && tool && tool.owner === user.id)
 
   const form = useForm<CreateRentalFormData>({
     resolver: zodResolver(createRentalSchema),
@@ -72,6 +77,29 @@ function CheckoutPage() {
     return (
       <div className="max-w-2xl mx-auto">
         <ErrorDisplay onRetry={() => refetch()} />
+      </div>
+    )
+  }
+
+  // Bloquear se o usuário for o dono da ferramenta
+  if (isOwner) {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-xl text-destructive">Ação não permitida</CardTitle>
+            <CardDescription>
+              Você não pode alugar suas próprias ferramentas.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Link to="/tools/$toolId" params={{ toolId: tool.id.toString() }}>
+              <Button variant="outline" className="w-full">
+                Voltar para detalhes
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
       </div>
     )
   }
@@ -145,7 +173,7 @@ function CheckoutPage() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full" size="lg" disabled={isPending || !tool.available}>
+              <Button type="submit" className="w-full" size="lg" disabled={isPending || !tool.available || isOwner}>
                 {isPending ? (
                   <>
                     <LoadingSpinner size="sm" className="mr-2" />

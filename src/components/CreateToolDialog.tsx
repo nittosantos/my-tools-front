@@ -1,5 +1,6 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useMemo } from "react"
 import {
   Dialog,
   DialogContent,
@@ -92,29 +93,43 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
   const isPending = isCreating || isUpdating
   const isEditMode = !!tool
 
-  // Key para forçar remontagem do form quando tool ou open mudar
-  const formKey = tool ? `edit-${tool.id}` : `create-${open}`
+  // Calcular defaultValues com useMemo baseado em tool e open
+  const defaultValues = useMemo(() => {
+    if (tool && open) {
+      // Modo edição: preencher com dados da ferramenta
+      return {
+        title: tool.title,
+        description: tool.description,
+        category: tool.category,
+        price_per_day: typeof tool.price_per_day === 'string' ? parseFloat(tool.price_per_day) : tool.price_per_day,
+        state: tool.state || "",
+        city: tool.city || "",
+        image: tool.image_url || undefined,
+      }
+    }
+    // Modo criação: valores vazios
+    return {
+      title: "",
+      description: "",
+      category: "outros",
+      price_per_day: 0,
+      state: "",
+      city: "",
+    }
+  }, [tool, open])
+
+  // Key para forçar remontagem do form quando tool mudar ou modal abrir
+  // Usa tool?.id quando em modo edição, ou timestamp quando criar (garante nova instância)
+  const formKey = useMemo(() => {
+    if (tool && open) {
+      return `edit-${tool.id}`
+    }
+    return `create-${open ? Date.now() : 'closed'}`
+  }, [tool?.id, open])
 
   const form = useForm<CreateToolFormData>({
     resolver: zodResolver(createToolSchema),
-    defaultValues: tool
-      ? {
-          title: tool.title,
-          description: tool.description,
-          category: tool.category,
-          price_per_day: typeof tool.price_per_day === 'string' ? parseFloat(tool.price_per_day) : tool.price_per_day,
-          state: tool.state || "",
-          city: tool.city || "",
-          image: tool.image_url || undefined,
-        }
-      : {
-          title: "",
-          description: "",
-          category: "outros",
-          price_per_day: 0,
-          state: "",
-          city: "",
-        },
+    defaultValues,
   })
 
   const onSubmit = (data: CreateToolFormData) => {
@@ -226,8 +241,19 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
                         step="0.01"
                         min="0.01"
                         placeholder="0.00"
-                        {...field}
-                        onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          const value = e.target.value
+                          if (value === "") {
+                            field.onChange(0)
+                          } else {
+                            const numValue = parseFloat(value)
+                            if (!isNaN(numValue)) {
+                              field.onChange(numValue)
+                            }
+                          }
+                        }}
+                        onBlur={field.onBlur}
                       />
                     </FormControl>
                     <FormMessage />

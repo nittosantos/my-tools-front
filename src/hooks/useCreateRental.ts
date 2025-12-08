@@ -17,9 +17,10 @@ export function useCreateRental() {
       })
       return response.data
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["my-rentals"] })
-      queryClient.invalidateQueries({ queryKey: ["received-rentals"] })
+    onSuccess: async () => {
+      // Invalidar e aguardar refetch antes de navegar
+      await queryClient.invalidateQueries({ queryKey: ["my-rentals"] })
+      await queryClient.invalidateQueries({ queryKey: ["received-rentals"] })
       toast.success("Aluguel criado com sucesso!")
       navigate({ to: "/dashboard/my-rentals" })
     },

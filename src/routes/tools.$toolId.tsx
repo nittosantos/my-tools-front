@@ -34,9 +34,12 @@ function ToolDetailsPage() {
   const { toolId } = Route.useParams()
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthenticated } = useAuth()
+  const { isAuthenticated, user } = useAuth()
   const id = parseInt(toolId)
   const { data: tool, isLoading, error, refetch } = useTool(id)
+  
+  // Verificar se o usuário é o dono da ferramenta
+  const isOwner = user && tool && tool.owner === user.id
 
   // Se estiver na rota de rent (/tools/$toolId/rent), renderizar apenas o Outlet (checkout)
   const isRentRoute = location.pathname.includes('/rent')
@@ -69,6 +72,10 @@ function ToolDetailsPage() {
     if (!isAuthenticated) {
       navigate({ to: "/login" })
       return
+    }
+    // Verificar se o usuário está tentando alugar sua própria ferramenta
+    if (isOwner) {
+      return // Não fazer nada se for o próprio dono
     }
     navigate({ to: "/tools/$toolId/rent", params: { toolId: tool.id.toString() } })
   }
@@ -130,9 +137,13 @@ function ToolDetailsPage() {
               className="w-full"
               size="lg"
               onClick={handleRent}
-              disabled={!tool.available}
+              disabled={!tool.available || isOwner}
             >
-              {isAuthenticated ? "Alugar Agora" : "Faça login para alugar"}
+              {!isAuthenticated 
+                ? "Faça login para alugar" 
+                : isOwner 
+                ? "Você é o dono desta ferramenta" 
+                : "Alugar Agora"}
             </Button>
           </CardContent>
         </Card>

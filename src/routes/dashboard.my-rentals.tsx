@@ -1,6 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router"
+import { useState } from "react"
 import { useMyRentals } from "@/hooks/useMyRentals"
+import { useReceivedRentals } from "@/hooks/useReceivedRentals"
 import { useFinishRental } from "@/hooks/useFinishRental"
+import { useApproveRental } from "@/hooks/useApproveRental"
+import { useRejectRental } from "@/hooks/useRejectRental"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -9,7 +13,7 @@ import { ErrorDisplay } from "@/components/ErrorDisplay"
 import { LoadingSpinner } from "@/components/LoadingSpinner"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
-import { CheckCircle2 } from "lucide-react"
+import { CheckCircle2, Check, X } from "lucide-react"
 import type { RentalStatus } from "@/types"
 
 const statusLabels: Record<RentalStatus, string> = {
@@ -31,8 +35,17 @@ export const Route = createFileRoute("/dashboard/my-rentals")({
 })
 
 function MyRentalsPage() {
-  const { data: rentals, isLoading, error, refetch } = useMyRentals()
+  const [activeTab, setActiveTab] = useState<"my" | "received">("my")
+  const { data: myRentals, isLoading: isLoadingMy, error: errorMy, refetch: refetchMy } = useMyRentals()
+  const { data: receivedRentals, isLoading: isLoadingReceived, error: errorReceived, refetch: refetchReceived } = useReceivedRentals()
   const { mutate: finishRental, isPending: isFinishing } = useFinishRental()
+  const { mutate: approveRental, isPending: isApproving } = useApproveRental()
+  const { mutate: rejectRental, isPending: isRejecting } = useRejectRental()
+
+  const rentals = activeTab === "my" ? myRentals : receivedRentals
+  const isLoading = activeTab === "my" ? isLoadingMy : isLoadingReceived
+  const error = activeTab === "my" ? errorMy : errorReceived
+  const refetch = activeTab === "my" ? refetchMy : refetchReceived
 
   if (isLoading) {
     return (
@@ -66,7 +79,27 @@ function MyRentalsPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Meus Aluguéis</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-semibold">Meus Aluguéis</h2>
+      </div>
+
+      {/* Abas */}
+      <div className="flex gap-2 mb-6 border-b">
+        <Button
+          variant={activeTab === "my" ? "default" : "ghost"}
+          onClick={() => setActiveTab("my")}
+          className="rounded-b-none"
+        >
+          Aluguéis que Fiz
+        </Button>
+        <Button
+          variant={activeTab === "received" ? "default" : "ghost"}
+          onClick={() => setActiveTab("received")}
+          className="rounded-b-none"
+        >
+          Aluguéis Recebidos
+        </Button>
+      </div>
 
       {rentals && rentals.length > 0 ? (
         <div className="space-y-4">
@@ -79,8 +112,12 @@ function MyRentalsPage() {
                       {rental.tool_details?.title || `Ferramenta #${rental.tool}`}
                     </CardTitle>
                     <CardDescription>
-                      {rental.tool_details?.category && (
-                        <span className="capitalize">{rental.tool_details.category}</span>
+                      {activeTab === "my" ? (
+                        rental.tool_details?.category && (
+                          <span className="capitalize">{rental.tool_details.category}</span>
+                        )
+                      ) : (
+                        <>Alugado por: {rental.renter_username || `Usuário #${rental.renter}`}</>
                       )}
                     </CardDescription>
                   </div>
@@ -117,7 +154,73 @@ function MyRentalsPage() {
                   )}
                 </div>
 
-                {rental.status === "approved" && (
+                {/* Ações para aluguéis que fiz */}
+                {activeTab === "my" && rental.status === "approved" && (
+                  <div className="flex gap-2 pt-4 border-t">
+                    <Button
+                      variant="default"
+                      onClick={() => finishRental(rental.id)}
+                      disabled={isFinishing}
+                      className="flex-1"
+                    >
+                      {isFinishing ? (
+                        <>
+                          <LoadingSpinner size="sm" className="mr-2" />
+                          Finalizando...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="h-4 w-4 mr-2" />
+                          Finalizar Aluguel
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+
+                {/* Ações para aluguéis recebidos */}
+                {activeTab === "received" && rental.status === "pending" && (
+                  <div className="flex gap-2 pt-4 border-t">
+                    <Button
+                      variant="default"
+                      onClick={() => approveRental(rental.id)}
+                      disabled={isApproving || isRejecting}
+                      className="flex-1"
+                    >
+                      {isApproving ? (
+                        <>
+                          <LoadingSpinner size="sm" className="mr-2" />
+                          Aprovando...
+                        </>
+                      ) : (
+                        <>
+                          <Check className="h-4 w-4 mr-2" />
+                          Aprovar
+                        </>
+                      )}
+                    </Button>
+                    <Button
+                      variant="destructive"
+                      onClick={() => rejectRental(rental.id)}
+                      disabled={isApproving || isRejecting}
+                      className="flex-1"
+                    >
+                      {isRejecting ? (
+                        <>
+                          <LoadingSpinner size="sm" className="mr-2" />
+                          Rejeitando...
+                        </>
+                      ) : (
+                        <>
+                          <X className="h-4 w-4 mr-2" />
+                          Rejeitar
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+
+                {activeTab === "received" && rental.status === "approved" && (
                   <div className="flex gap-2 pt-4 border-t">
                     <Button
                       variant="default"
@@ -164,13 +267,17 @@ function MyRentalsPage() {
                 </svg>
               </div>
             </div>
-            <h3 className="text-lg font-semibold mb-2">Nenhum aluguel realizado</h3>
+            <h3 className="text-lg font-semibold mb-2">
+              {activeTab === "my" ? "Nenhum aluguel realizado" : "Nenhuma solicitação recebida"}
+            </h3>
             <p className="text-muted-foreground mb-6">
-              Você ainda não realizou nenhum aluguel. Explore as ferramentas disponíveis e encontre o que precisa!
+              {activeTab === "my" 
+                ? "Você ainda não realizou nenhum aluguel. Explore as ferramentas disponíveis e encontre o que precisa!"
+                : "Você ainda não recebeu solicitações de aluguel para suas ferramentas. Quando alguém solicitar o aluguel de uma de suas ferramentas, ela aparecerá aqui."}
             </p>
-            <Link to="/">
+            <Link to={activeTab === "my" ? "/" : "/dashboard/my-tools"}>
               <Button variant="outline" size="lg">
-                Explorar Ferramentas
+                {activeTab === "my" ? "Explorar Ferramentas" : "Ver Minhas Ferramentas"}
               </Button>
             </Link>
           </div>

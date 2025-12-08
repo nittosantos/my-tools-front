@@ -73,6 +73,7 @@ export const createRentalSchema = z.object({
 ).refine(
   (data) => {
     const start = new Date(data.start_date)
+    start.setHours(0, 0, 0, 0)
     const today = new Date()
     today.setHours(0, 0, 0, 0)
     return start >= today
