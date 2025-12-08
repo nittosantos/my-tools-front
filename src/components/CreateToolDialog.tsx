@@ -94,13 +94,13 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
   const isEditMode = !!tool
 
   // Calcular defaultValues com useMemo baseado em tool e open
-  const defaultValues = useMemo(() => {
+  const defaultValues = useMemo((): CreateToolFormData => {
     if (tool && open) {
       // Modo edição: preencher com dados da ferramenta
       return {
         title: tool.title,
         description: tool.description,
-        category: tool.category,
+        category: tool.category as Category,
         price_per_day: typeof tool.price_per_day === 'string' ? parseFloat(tool.price_per_day) : tool.price_per_day,
         state: tool.state || "",
         city: tool.city || "",
@@ -111,7 +111,7 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
     return {
       title: "",
       description: "",
-      category: "outros",
+      category: "outros" as Category,
       price_per_day: 0,
       state: "",
       city: "",
@@ -129,7 +129,7 @@ export function CreateToolDialog({ open, onOpenChange, tool }: CreateToolDialogP
 
   const form = useForm<CreateToolFormData>({
     resolver: zodResolver(createToolSchema),
-    defaultValues,
+    defaultValues: defaultValues as CreateToolFormData,
   })
 
   const onSubmit = (data: CreateToolFormData) => {

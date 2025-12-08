@@ -37,7 +37,7 @@ function ToolDetailsPage() {
   const { isAuthenticated, user } = useAuth()
   const id = parseInt(toolId)
   const { data: tool, isLoading, error, refetch } = useTool(id)
-  
+
   // Verificar se o usuário é o dono da ferramenta
   const isOwner = user && tool && tool.owner === user.id
 
@@ -137,12 +137,12 @@ function ToolDetailsPage() {
               className="w-full"
               size="lg"
               onClick={handleRent}
-              disabled={!tool.available || isOwner}
+              disabled={!tool.available || !!isOwner}
             >
-              {!isAuthenticated 
-                ? "Faça login para alugar" 
-                : isOwner 
-                ? "Você é o dono desta ferramenta" 
+              {!isAuthenticated
+                ? "Faça login para alugar"
+                : isOwner
+                ? "Você é o dono desta ferramenta"
                 : "Alugar Agora"}
             </Button>
           </CardContent>
